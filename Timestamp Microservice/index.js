@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-
+require("dotenv").config();
 const cors = require("cors");
 app.use(cors({ optionsSuccessStatus: 200 })); // some legacy browsers choke on 204
 
@@ -11,11 +11,11 @@ app.get("/", function (req, res) {
   res.sendFile(`${__dirname}/views/index.html`);
 });
 
-app.get("/api/easteregg", function (req, res) {
-  res.json({ greeting: "Oh, you've found this! Well, congrats! :p" });
-});
+// app.get("/api/", function (req, res) {
+//   res.json({ greeting: "Oh, you've found this! Well, congrats! :p" });
+// });
 
-app.get("/api/timestamp", function (req, res) {
+app.get("/api/", function (req, res) {
   const date = new Date();
 
   res.json({
@@ -24,7 +24,7 @@ app.get("/api/timestamp", function (req, res) {
   });
 });
 
-app.get("/api/timestamp/:dateParam", function (req, res) {
+app.get("/api/:dateParam", function (req, res) {
   let dateParam = req.params.dateParam;
 
   if (/^\d{5,}$/.test(dateParam)) dateParam = parseInt(dateParam);
