@@ -20,6 +20,11 @@ app.get("/api/:date?", (req, res) => {
   // Check if dateString is a Unix timestamp (numeric)
   const isUnixTimestamp = dateString && /^\d+$/.test(dateString);
 
+  // If dateString is incomplete, append a default day and month
+  if (!isUnixTimestamp && dateString && /^[0-9]{4}-$/.test(dateString)) {
+    dateString += "01-01";
+  }
+
   // Convert dateString to a number if it's a Unix timestamp
   const timestamp = isUnixTimestamp
     ? Number(dateString)
