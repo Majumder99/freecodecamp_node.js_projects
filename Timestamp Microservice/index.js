@@ -17,30 +17,28 @@ app.use(express.static("public"));
 app.get("/api/:date?", (req, res) => {
   let dateString = req.params.date;
 
-  // Check if dateString is a Unix timestamp (numeric)
-  const isUnixTimestamp = dateString && /^\d+$/.test(dateString);
-
-  // If dateString is incomplete, append a default day and month
-  if (!isUnixTimestamp && dateString && /^[0-9]{4}-$/.test(dateString)) {
-    dateString += "01-01";
+  var date = new Date();
+  // if the given parameter is a number (timestamp)
+  if (/^\d*$/.test(dateString)) {
+    date.setTime(dateString);
   }
-
-  // Convert dateString to a number if it's a Unix timestamp
-  const timestamp = isUnixTimestamp
-    ? Number(dateString)
-    : dateString
-    ? Date.parse(dateString)
-    : Date.now();
+  // else we just create a new date parsing the string given
+  else {
+    date = new Date(dateString);
+  }
 
   // Check if the timestamp is valid
-  if (isNaN(timestamp)) {
-    res.json({ error: "Invalid Date" });
-  } else {
-    const date = new Date(timestamp);
-
-    // Now you can send the formatted date as a response
-    res.json({ unix: date.getTime(), utc: date.toUTCString() });
-  }
+  res.set({ "Content-Type": "application/json" });
+  if (!date.getTime())
+    res.send(JSON.stringify({ error: "Invalid date given" }));
+  // else, we send the object with two members (unix and natural)
+  else
+    res.send(
+      JSON.stringify({
+        unix: date.getTime(),
+        natural: strftime("%B %d, %Y", date),
+      })
+    );
 });
 
 // http://expressjs.com/en/starter/basic-routing.html
