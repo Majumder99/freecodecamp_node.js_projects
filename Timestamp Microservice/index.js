@@ -15,15 +15,17 @@ app.use(cors({ optionsSuccessStatus: 200 })); // some legacy browsers choke on 2
 app.use(express.static("public"));
 
 app.get("/api/:date?", (req, res) => {
-  let dateString = req.params.date || Date.now();
+  let dateString = req.params.date;
 
   // Check if dateString is a Unix timestamp (numeric)
-  const isUnixTimestamp = /^\d+$/.test(dateString);
+  const isUnixTimestamp = dateString && /^\d+$/.test(dateString);
 
   // Convert dateString to a number if it's a Unix timestamp
   const timestamp = isUnixTimestamp
     ? Number(dateString)
-    : Date.parse(dateString);
+    : dateString
+    ? Date.parse(dateString)
+    : Date.now();
 
   // Check if the timestamp is valid
   if (isNaN(timestamp)) {
